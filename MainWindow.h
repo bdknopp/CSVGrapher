@@ -11,6 +11,7 @@
 
 /* C++ includes. */
 #include <exception>
+#include <iostream>
 
 /* Qt includes. */
 #include <QMainWindow>
@@ -22,13 +23,17 @@
 #include <QTextStream>
 
 #include <QStandardItemModel>
+#include <QItemSelectionModel>
+
+#include <QGraphicsView>
 
 /* Project includes. */
 #include "CSVFileException.h"
+#include "LineGraphView.h"
 
 /*
  * Namespace: Ui
- * Description: Encapsulates Ui View components.
+ * Description: Encapsulates Ui Control and View components.
  */
 namespace Ui {
   class MainWindow;
@@ -61,6 +66,14 @@ class MainWindow : public QMainWindow
   /* Private slot methods. */
   private slots:
     /*
+     * Method: on_browseButton_clicked
+     * Description: Browses for a file to open or save.
+     * Parameters: none.
+     * Returns: none.
+     */
+    void on_browseButton_clicked();
+
+    /*
      * Method: on_fileOpenButton_clicked
      * Description: Opens data file from name, populating data model.
      * Parameters: none.
@@ -77,28 +90,20 @@ class MainWindow : public QMainWindow
     void on_fileSaveButton_clicked();
 
     /*
-     * Method: on_valueAddButton_clicked
-     * Description: Adds a new value to the data model.
+     * Method: on_addRowButton_clicked
+     * Description: Adds a new row under the currently selected one.
      * Parameters: none.
      * Returns: none.
      */
-    void on_valueAddButton_clicked();
+    void on_addRowButton_clicked();
 
     /*
-     * Method: on_valueModifyButton_clicked
-     * Description: Modifies the selected value in the data model.
+     * Method: on_deleteRowButton_clicked
+     * Description: Deletes the currently selected row.
      * Parameters: none.
      * Returns: none.
      */
-    void on_valueModifyButton_clicked();
-
-    /*
-     * Method: on_valueRemoveButton_clicked
-     * Description: Removes the selected value from the data model.
-     * Parameters: none.
-     * Returns: none.
-     */
-    void on_valueRemoveButton_clicked();
+    void on_deleteRowButton_clicked();
 
   /* Private members. */
   private:
@@ -131,11 +136,23 @@ class MainWindow : public QMainWindow
     void initializeModel(QString xLabel, QString yLabel,
                          QStringList dataLines);
 
+    /*
+     * Method: initializeViews
+     * Description: Sets up the graphics view and (hidden) table edit window.
+     * Parameters: none.
+     * Returns: none.
+     */
+    void initializeViews();
+
     // Reference to main window.
     Ui::MainWindow *ui;
 
-    // Data Model.
+    // Data Model; selection model.
     QStandardItemModel *dataModel;
+    QItemSelectionModel *selectionModel;
+
+    // Line graph view scene.
+    LineGraphView *graphView;
 };
 
 #endif // MAINWINDOW_H

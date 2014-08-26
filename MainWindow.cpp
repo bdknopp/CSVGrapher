@@ -10,9 +10,12 @@
  */
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
-  ui(new Ui::MainWindow)
+  ui(new Ui::MainWindow),
+  dataModel(new QStandardItemModel(this))
 {
   ui->setupUi(this);
+  initializeModel("X-data", "Y-data", QStringList());
+  initializeViews();
 }
 
 /*
@@ -21,6 +24,21 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
   delete ui;
+  delete dataModel;
+  delete graphView;
+}
+
+/*
+ * Method: on_browseButton_clicked
+ * Description: Browses for a file to open or save.
+ * Parameters: none.
+ * Returns: none.
+ */
+void MainWindow::on_browseButton_clicked()
+{
+  QString fName = QFileDialog::getOpenFileName(this, tr("Select file..."),
+                                               "~/", tr("CSV File (*.csv)"));
+  ui->fileTextBox->setText(fName);
 }
 
 /*
@@ -28,14 +46,10 @@ MainWindow::~MainWindow()
  */
 void MainWindow::on_fileOpenButton_clicked()
 {
-  QString fName = QFileDialog::getOpenFileName(this, tr("Open Data File"),
-                                               "~/", tr("CSV File (*.csv)"));
-  ui->fileTextBox->setText(fName);
-
   // Try to read; display error if failed.
   try
   {
-    readCSVFile(fName);
+    readCSVFile(ui->fileTextBox->text());
   }
   catch (CSVFileException csvFExc)
   {
@@ -50,14 +64,10 @@ void MainWindow::on_fileOpenButton_clicked()
  */
 void MainWindow::on_fileSaveButton_clicked()
 {
-  QString fName = QFileDialog::getOpenFileName(this, tr("Save Data File"),
-                                               "~/", tr("CSV File (*.csv)"));
-  ui->fileTextBox->setText(fName);
-
   // Try to write; display error if failed.
   try
   {
-    writeCSVFile(fName);
+    writeCSVFile(ui->fileTextBox->text());
   }
   catch (CSVFileException csvFExc)
   {
@@ -68,27 +78,28 @@ void MainWindow::on_fileSaveButton_clicked()
 }
 
 /*
- * Method: on_valueAddButton_clicked
+ * Method: on_addRowButton_clicked
  */
-void MainWindow::on_valueAddButton_clicked()
+void MainWindow::on_addRowButton_clicked()
 {
-
+  // Add single row below currently selected one.
+  //   Or, add at beginning.
+  QModelIndexList rowList = selectionModel->selectedRows();
+  if (rowList.size() > 0)
+    dataModel->insertRows(rowList.at(0).row(), 1);
+  else
+    dataModel->insertRows(0, 1);
 }
 
 /*
- * Method: on_valueModifyButton_clicked
+ * Method: on_removeRowButton_clicked
  */
-void MainWindow::on_valueModifyButton_clicked()
+void MainWindow::on_deleteRowButton_clicked()
 {
-
-}
-
-/*
- * Method: on_valueRemoveButton_clicked
- */
-void MainWindow::on_valueRemoveButton_clicked()
-{
-
+  // Get list of selected rows; delete each one.
+  QModelIndexList rowList = selectionModel->selectedRows();
+  if (rowList.size() > 0)
+    dataModel->removeRows(rowList.at(0).row(), rowList.size());
 }
 
 /*
@@ -179,7 +190,8 @@ void MainWindow::writeCSVFile(QString fName) throw(CSVFileException)
 void MainWindow::initializeModel(QString xLabel, QString yLabel,
                                  QStringList dataLines)
 {
-  dataModel = new QStandardItemModel(dataLines.size(), 2, this);
+  dataModel->setRowCount(dataLines.size());
+  dataModel->setColumnCount(2);
   dataModel->setHeaderData(0, Qt::Horizontal, xLabel);
   dataModel->setHeaderData(1, Qt::Horizontal, yLabel);
 
@@ -191,4 +203,19 @@ void MainWindow::initializeModel(QString xLabel, QString yLabel,
     dataModel->setData(dataModel->index(i, 1, QModelIndex()),
                        data.at(1).toDouble());
   }
+}
+
+/*
+ * Method: initializeViews
+ */
+void MainWindow::initializeViews()
+{
+  // Line graph view.
+  graphView = new LineGraphView();
+  graphView->setModel(dataModel);
+  graphView->setGraphicsView(ui->graphicsView);
+
+  selectionModel = new QItemSelectionModel(dataModel);
+  ui->tableView->setModel(dataModel);
+  ui->tableView->setSelectionModel(selectionModel);
 }

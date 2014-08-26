@@ -13,9 +13,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        MainWindow.cpp
+        MainWindow.cpp \
+    LineGraphView.cpp
 
 HEADERS  += MainWindow.h \
-    CSVFileException.h
+    CSVFileException.h \
+    LineGraphView.h
 
 FORMS    += MainWindow.ui
