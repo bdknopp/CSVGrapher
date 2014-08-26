@@ -8,6 +8,9 @@
 #ifndef LINEGRAPHVIEW_H
 #define LINEGRAPHVIEW_H
 
+/* C includes. */
+#include <cmath>
+
 /* C++ includes. */
 #include <iostream>
 
@@ -175,7 +178,7 @@ class LineGraphView : public QAbstractItemView
      *           : start, end: Beginning and ending row indices.
      * Returns: none.
      */
-    void rowsInserted(const QModelIndex &parent, int start, int end);
+    //void rowsInserted(const QModelIndex &parent, int start, int end);
 
   /* Private members. */
   private:

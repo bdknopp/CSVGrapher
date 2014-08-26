@@ -188,15 +188,6 @@ void LineGraphView::rowsAboutToBeRemoved(const QModelIndex &/*parent*/,
 }
 
 /*
- * Method: rowsInserted
- */
-void LineGraphView::rowsInserted(const QModelIndex &parent, int start,
-                                 int end)
-{
-  // Don't really do anything if rows are inserted.
-}
-
-/*
  * Method: redrawPath
  */
 void LineGraphView::redrawPath()
@@ -239,8 +230,6 @@ void LineGraphView::redrawPath()
     path.lineTo(QPointF(j.key(), j.value()));
     j++;
   }
-  //path.addText(minX, maxY, QFont("Times", 10, QFont::Bold),
-  //             "Text.");
 
   // Set scene properties; draw connected line.
   sceneRectangle = QRectF(minX, minY, (maxX - minX),
@@ -252,9 +241,26 @@ void LineGraphView::redrawPath()
   pen.setCapStyle(Qt::RoundCap);
   pen.setJoinStyle(Qt::MiterJoin);
   pen.setWidthF(.1);
-  //pen.setColor(QColor(255, 0, 0));
-
+  pen.setColor(QColor(255, 0, 0));
   scene->addPath(path, pen);
+
+  // Draw axes.
+  pen.setWidthF(0);
+  pen.setColor(QColor(0, 0, 0));
+  scene->addLine(minX, 0, maxX, 0, pen);
+  scene->addLine(0, minY, 0, maxY, pen);
+
+/*
+  double stepH = pow(10.0, floor(log10(maxX - minX))) / 10.0;
+  double stepV = pow(10.0, floor(log10(maxY - minY))) / 10.0;
+  for (double pos = minX; pos < maxX; pos += stepH)
+    scene->addLine(pos, stepV / -10.0,
+                   pos, stepV / 10.0);
+
+  for (double pos = minY; pos < maxY; pos += stepV)
+    scene->addLine(-stepH, pos,
+                   stepH, pos);
+*/
 
   view->setScene(scene);
   view->fitInView(sceneRectangle);
