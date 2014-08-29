@@ -11,13 +11,11 @@
 /* C includes. */
 #include <cmath>
 
-/* C++ includes. */
-#include <iostream>
-
 /* Qt includes. */
 #include <QAbstractItemView>
 #include <QGraphicsView>
 #include <QGraphicsScene>
+#include <QLabel>
 
 #include <QEvent>
 
@@ -53,6 +51,15 @@ class LineGraphView : public QAbstractItemView
      * Returns: none.
      */
     void setGraphicsView(QGraphicsView *graphicsView);
+
+    /*
+     * Method: setLabels
+     * Description: Links existing Ui labels to this view; for display of
+     *            : graph axis labels.
+     * Parameters: xLabel, yLabel: QLabel for X- and Y-axes.
+     * Returns: none.
+     */
+    void setLabels(QLabel *xLabel, QLabel *yLabel);
 
     /*
      * Method: visualRect
@@ -193,6 +200,8 @@ class LineGraphView : public QAbstractItemView
     QRectF sceneRectangle;
     QGraphicsView *view;
     QGraphicsScene *scene;
+
+    QLabel *xLabel, *yLabel;
 
     // Map of model indices to graphics objects.
     QHash<QModelIndex,QPointF> indexPointHash;

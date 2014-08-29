@@ -11,7 +11,6 @@
 
 /* C++ includes. */
 #include <exception>
-#include <iostream>
 
 /* Qt includes. */
 #include <QMainWindow>

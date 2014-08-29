@@ -33,6 +33,15 @@ void LineGraphView::setGraphicsView(QGraphicsView *graphicsView)
 }
 
 /*
+ * Method: setLabels
+ */
+void LineGraphView::setLabels(QLabel *xLabel, QLabel *yLabel)
+{
+  this->xLabel = xLabel;
+  this->yLabel = yLabel;
+}
+
+/*
  * Method: visualRect
  */
 QRect LineGraphView::visualRect(const QModelIndex &index) const
@@ -73,7 +82,6 @@ bool LineGraphView::eventFilter(QObject *object, QEvent *event)
 {
   if ((object == view) && (event->type() == QEvent::Resize))
   {
-    std::cout << "Resize event triggered." << std::endl;
     view->fitInView(sceneRectangle);
     return false;
   }
@@ -240,27 +248,30 @@ void LineGraphView::redrawPath()
   QPen pen = QPen(Qt::SolidLine);
   pen.setCapStyle(Qt::RoundCap);
   pen.setJoinStyle(Qt::MiterJoin);
-  pen.setWidthF(.1);
+  pen.setWidthF(0);
   pen.setColor(QColor(255, 0, 0));
   scene->addPath(path, pen);
 
   // Draw axes.
-  pen.setWidthF(0);
   pen.setColor(QColor(0, 0, 0));
   scene->addLine(minX, 0, maxX, 0, pen);
   scene->addLine(0, minY, 0, maxY, pen);
 
-/*
-  double stepH = pow(10.0, floor(log10(maxX - minX))) / 10.0;
-  double stepV = pow(10.0, floor(log10(maxY - minY))) / 10.0;
+  double stepH = (maxX - minX) / 10.0;
+  double stepV = (maxY - minY) / 10.0;
   for (double pos = minX; pos < maxX; pos += stepH)
+  {
     scene->addLine(pos, stepV / -10.0,
-                   pos, stepV / 10.0);
+                   pos, stepV / 10.0, pen);
+  }
+  //xLabel->setText("XLabel Text");
 
   for (double pos = minY; pos < maxY; pos += stepV)
-    scene->addLine(-stepH, pos,
-                   stepH, pos);
-*/
+  {
+    scene->addLine(stepH / -10.0, pos,
+                   stepH / 10.0, pos, pen);
+  }
+  //yLabel->setText("YLabel Text");
 
   view->setScene(scene);
   view->fitInView(sceneRectangle);

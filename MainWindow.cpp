@@ -214,6 +214,7 @@ void MainWindow::initializeViews()
   graphView = new LineGraphView();
   graphView->setModel(dataModel);
   graphView->setGraphicsView(ui->graphicsView);
+  //graphView->setLabels(ui->xLabel, ui->yLabel);
 
   selectionModel = new QItemSelectionModel(dataModel);
   ui->tableView->setModel(dataModel);
