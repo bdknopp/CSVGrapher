@@ -257,6 +257,7 @@ void LineGraphView::redrawPath()
   scene->addLine(minX, 0, maxX, 0, pen);
   scene->addLine(0, minY, 0, maxY, pen);
 
+  // X axis labels.
   double stepH = (maxX - minX) / 10.0;
   double stepV = (maxY - minY) / 10.0;
   for (double pos = minX; pos < maxX; pos += stepH)
@@ -264,15 +265,21 @@ void LineGraphView::redrawPath()
     scene->addLine(pos, stepV / -10.0,
                    pos, stepV / 10.0, pen);
   }
-  xLabel->setText("XLabel Text");
+  QString xLabelText = "X: " + model()->headerData(0,Qt::Horizontal).toString() +
+      " (" + QString::number(stepH) + ")";
+  xLabel->setText(xLabelText);
 
+  // Y axis labels.
   for (double pos = minY; pos < maxY; pos += stepV)
   {
     scene->addLine(stepH / -10.0, pos,
                    stepH / 10.0, pos, pen);
   }
-  yLabel->setText("YLabel Text");
+  QString yLabelText = "Y: " + model()->headerData(1,Qt::Horizontal).toString() +
+      " (" + QString::number(stepV) + ")";
+  yLabel->setText(yLabelText);
 
+  // Finally draw scene.
   view->setScene(scene);
   view->fitInView(sceneRectangle);
   view->show();
