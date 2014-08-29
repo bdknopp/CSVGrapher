@@ -264,14 +264,14 @@ void LineGraphView::redrawPath()
     scene->addLine(pos, stepV / -10.0,
                    pos, stepV / 10.0, pen);
   }
-  //xLabel->setText("XLabel Text");
+  xLabel->setText("XLabel Text");
 
   for (double pos = minY; pos < maxY; pos += stepV)
   {
     scene->addLine(stepH / -10.0, pos,
                    stepH / 10.0, pos, pen);
   }
-  //yLabel->setText("YLabel Text");
+  yLabel->setText("YLabel Text");
 
   view->setScene(scene);
   view->fitInView(sceneRectangle);
